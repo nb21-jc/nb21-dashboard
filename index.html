@@ -5,6 +5,42 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NB21 · Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+var tramitadores=[
+  {n:'RAQUEL00',    total:589, fp:403, c:'#D03C3C'},
+  {n:'LOLY00',      total:118, fp:66,  c:'#B97215'},
+  {n:'PAULA',       total:113, fp:79,  c:'#185FA5'},
+  {n:'GABINETE',    total:81,  fp:0,   c:'#244B5A'},
+  {n:'GUILLERMO00', total:78,  fp:36,  c:'#1A9B6C'},
+  {n:'EVA00',       total:50,  fp:28,  c:'#7F77DD'},
+  {n:'TITA',        total:31,  fp:0,   c:'#D85A30'},
+  {n:'MARTA00',     total:22,  fp:11,  c:'#639922'},
+  {n:'ESTEFANIA',   total:4,   fp:0,   c:'#888780'}
+];
+function showSec(id,btn){
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active')});
+  document.querySelectorAll('.navtab').forEach(function(t){t.classList.remove('active')});
+  var sec=document.getElementById('sec-'+id);
+  if(sec) sec.classList.add('active');
+  if(btn) btn.classList.add('active');
+}
+function renderTrams(){
+  var max=589,html='';
+  tramitadores.forEach(function(t){
+    var pct=Math.round(t.total/max*100);
+    html+='<div class="tram-card">'
+      +'<div class="tram-head"><div class="tram-av" style="background:'+t.c+'22;color:'+t.c+'">'+t.n.substring(0,2)+'</div>'
+      +'<div class="tram-name">'+t.n+'</div></div>'
+      +'<div class="tram-count">'+t.total+'</div>'
+      +(t.fp>0?'<div class="tram-fp">'+t.fp+' fuera de plazo</div>':'<div class="tram-ok">Sin vencidos</div>')
+      +'<div class="tram-bar"><div class="tram-fill" style="width:'+pct+'%;background:'+t.c+'"></div></div>'
+      +'</div>';
+  });
+  var el=document.getElementById('tram-grid');
+  if(el) el.innerHTML=html;
+}
+document.addEventListener('DOMContentLoaded', function(){ renderTrams(); });
+</script>
 <style>
 :root{
   --nb-blue:#1B3A6B;--nb-orange:#F98E2B;--nb-teal:#244B5A;
@@ -501,32 +537,5 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
   </div>
 
 </div>
-
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-var tramitadores=[
-  {n:'RAQUEL00',    total:589, fp:403, c:'#D03C3C'},
-  {n:'LOLY00',      total:118, fp:66,  c:'#B97215'},
-  {n:'PAULA',       total:113, fp:79,  c:'#185FA5'},
-  {n:'GABINETE',    total:81,  fp:0,   c:'#244B5A'},
-  {n:'GUILLERMO00', total:78,  fp:36,  c:'#1A9B6C'},
-  {n:'EVA00',       total:50,  fp:28,  c:'#7F77DD'},
-  {n:'TITA',        total:31,  fp:0,   c:'#D85A30'},
-  {n:'MARTA00',     total:22,  fp:11,  c:'#639922'},
-  {n:'ESTEFANIA',   total:4,   fp:0,   c:'#888780'}
-];
-function renderTrams(){
-  var max=589,html='';
-  tramitadores.forEach(function(t){
-    var pct=Math.round(t.total/max*100);
-    html+='<div class="tram-card">'
-      +'<div class="tram-head"><div class="tram-av" style="background:'+t.c+'22;color:'+t.c+'">'+t.n.substring(0,2)+'</div>'
-      +'<div class="tram-name">'+t.n+'</div></div>'
-      +'<div class="tram-count">'+t.total+'</div>'
-      +(t.fp>0?'<div class="tram-fp">'+t.fp+' fuera de plazo</div>':'<div class="tram-ok">Sin vencidos</div>')
-      +'<div class="tram-bar"><div class="tram-fill" style="width:'+pct+'%;background:'+t.c+'"></div></div>'
-      +'</div>';
-  });
-  document.getElementById('tram-grid').innerHTML=html;
-}
-function showSec(id,btn){
-  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active')}
+</body>
+</html>
