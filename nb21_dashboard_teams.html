@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NB21 · Dashboard de Equipo</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --nb-blue: #1B3A6B;
+  --nb-orange: #F98E2B;
+  --nb-teal: #244B5A;
+  --bg: #F4F3EF;
+  --surface: #FFFFFF;
+  --surface2: #EEEDE9;
+  --border: rgba(27,58,107,0.1);
+  --text: #1a1a18;
+  --text2: #6b6b66;
+  --text3: #9e9e99;
+  --green: #1D9E75;
+  --red: #D84040;
+  --amber: #BA7517;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 14px;
+}
+.topbar {
+  background: var(--nb-blue);
+  padding: 0 24px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.topbar-logo {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.logo-sq {
+  width: 8px; height: 8px; border-radius: 2px;
+}
+.topbar-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: #fff;
+  letter-spacing: 0.01em;
+}
+.topbar-sub {
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
+  margin-left: 8px;
+  padding-left: 8px;
+  border-left: 1px solid rgba(255,255,255,0.15);
+}
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.sync-pill {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.8);
+  cursor: pointer;
+  transition: background .15s;
+}
+.sync-pill:hover { background: rgba(255,255,255,0.18); }
+.sync-dot { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; }
+.period-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--nb-orange);
+  background: rgba(249,142,43,0.12);
+  border: 1px solid rgba(249,142,43,0.2);
+  border-radius: 4px;
+  padding: 3px 8px;
+}
+.main { padding: 20px 24px 32px; max-width: 1200px; }
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0,1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.kpi {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  position: relative;
+  overflow: hidden;
+}
+.kpi::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+.kpi.green::before { background: var(--green); }
+.kpi.amber::before { background: var(--amber); }
+.kpi.red::before { background: var(--red); }
+.kpi.blue::before { background: var(--nb-blue); }
+.kpi-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+.kpi-val { font-size: 26px; font-weight: 600; color: var(--text); line-height: 1; margin-bottom: 6px; }
+.kpi-val.danger { color: var(--red); }
+.kpi-delta { font-size: 12px; display: flex; align-items: center; gap: 4px; }
+.delta-up { color: var(--green); }
+.delta-dn { color: var(--red); }
+.delta-warn { color: var(--amber); }
+
+.layout { display: grid; grid-template-columns: 1fr 380px; gap: 14px; align-items: start; }
+.left { display: flex; flex-direction: column; gap: 14px; }
+.right { display: flex; flex-direction: column; gap: 14px; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.card-head {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.card-title { font-size: 13px; font-weight: 500; color: var(--text); }
+.card-meta { font-size: 11px; color: var(--text3); }
+.card-body { padding: 0; }
+
+.tab-row {
+  display: flex;
+  gap: 0;
+  padding: 10px 18px 0;
+  border-bottom: 1px solid var(--border);
+}
+.tab {
+  font-size: 12px;
+  padding: 6px 12px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: var(--text3);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: all .15s;
+  font-family: 'DM Sans', sans-serif;
+}
+.tab:hover { color: var(--text2); }
+.tab.active { color: var(--nb-blue); border-bottom-color: var(--nb-orange); font-weight: 500; }
+
+.task-list { padding: 0 18px; }
+.task-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.task-item:last-child { border-bottom: none; }
+.chk {
+  width: 16px; height: 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s;
+}
+.chk:hover { border-color: var(--nb-blue); }
+.chk.done { background: var(--green); border-color: var(--green); }
+.chk.done::after { content: '✓'; font-size: 10px; color: white; }
+.task-body { flex: 1; }
+.task-text { font-size: 13px; color: var(--text); line-height: 1.4; margin-bottom: 4px; }
+.task-text.done { color: var(--text3); text-decoration: line-through; }
+.task-foot { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.av {
+  width: 18px; height: 18px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 8px; font-weight: 600;
+  flex-shrink: 0;
+}
+.pill {
+  font-size: 10px; font-weight: 500;
+  padding: 2px 7px; border-radius: 20px;
+  white-space: nowrap;
+}
+.pill-warn { background: #FFF3D6; color: #92600A; }
+.pill-danger { background: #FDEAEA; color: #A32D2D; }
+.pill-info { background: #E6F1FB; color: #185FA5; }
+.pill-ok { background: #E1F5EE; color: #0F6E56; }
+.pill-neu { background: var(--surface2); color: var(--text2); }
+
+.add-task-row {
+  padding: 10px 18px 14px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 8px;
+}
+.add-task-row input {
+  flex: 1;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text);
+  outline: none;
+}
+.add-task-row input:focus { border-color: var(--nb-blue); }
+.add-task-row select {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  padding: 7px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text);
+  outline: none;
+}
+.btn-add {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  padding: 7px 14px;
+  border: 1px solid var(--nb-blue);
+  border-radius: var(--radius-sm);
+  background: var(--nb-blue);
+  color: white;
+  cursor: pointer;
+  font-weight: 500;
+  transition: opacity .15s;
+}
+.btn-add:hover { opacity: 0.85; }
+
+.oficina-table { width: 100%; border-collapse: collapse; }
+.oficina-table th {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text3);
+  padding: 8px 18px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  font-weight: 500;
+}
+.oficina-table td {
+  padding: 9px 18px;
+  font-size: 12px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+.oficina-table tr:last-child td { border-bottom: none; }
+.oficina-table tr:hover td { background: var(--bg); }
+.bar-wrap { width: 60px; height: 4px; background: var(--surface2); border-radius: 2px; display: inline-block; vertical-align: middle; }
+.bar-fill { height: 100%; border-radius: 2px; }
+
+.alert-list { padding: 12px 18px; display: flex; flex-direction: column; gap: 8px; }
+.alert {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  line-height: 1.4;
+}
+.alert-icon { font-size: 13px; flex-shrink: 0; margin-top: 0px; }
+.alert.danger { background: #FDEAEA; color: #7A2020; }
+.alert.warn { background: #FFF3D6; color: #7A4A0A; }
+.alert.ok { background: #E1F5EE; color: #0A4D36; }
+
+.doc-list { padding: 0 18px; }
+.doc-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: opacity .15s;
+}
+.doc-item:last-child { border-bottom: none; }
+.doc-item:hover { opacity: 0.75; }
+.doc-ico {
+  width: 30px; height: 30px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 600; flex-shrink: 0;
+  font-family: 'DM Mono', monospace;
+}
+.xl { background: #DBEAFC; color: #185FA5; }
+.wd { background: #D6F0E6; color: #0F6E56; }
+.doc-name { font-size: 12px; color: var(--text); flex: 1; line-height: 1.3; }
+.doc-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.doc-arrow { font-size: 14px; color: var(--text3); }
+
+.prog-section { padding: 14px 18px; display: flex; flex-direction: column; gap: 12px; }
+.prog-item {}
+.prog-head { display: flex; justify-content: space-between; margin-bottom: 5px; }
+.prog-label { font-size: 12px; color: var(--text2); }
+.prog-pct { font-size: 12px; font-weight: 500; }
+.prog-track { height: 5px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+.prog-fill { height: 100%; border-radius: 3px; transition: width .5s ease; }
+
+.empty { text-align: center; padding: 20px; font-size: 12px; color: var(--text3); }
+
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .main { padding: 14px 16px 24px; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-brand">
+    <div class="topbar-logo">
+      <div class="logo-sq" style="background:#F98E2B"></div>
+      <div class="logo-sq" style="background:rgba(255,255,255,0.4)"></div>
+    </div>
+    <span class="topbar-title">NB21 · Dashboard de Equipo</span>
+    <span class="topbar-sub">Norte Broker, S.L.</span>
+  </div>
+  <div class="topbar-right">
+    <span class="period-tag">Q1 2026</span>
+    <div class="sync-pill" onclick="handleSync()">
+      <div class="sync-dot" id="sync-dot"></div>
+      <span id="sync-label">Sincronizado</span>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="kpi-grid">
+    <div class="kpi green">
+      <div class="kpi-label">Primas Generales</div>
+      <div class="kpi-val">15,67M€</div>
+      <div class="kpi-delta delta-up">↑ +23,8% vs Q1 2025</div>
+    </div>
+    <div class="kpi blue">
+      <div class="kpi-label">H.S.P. R1%</div>
+      <div class="kpi-val">5,63%</div>
+      <div class="kpi-delta delta-up">↑ +0,8 pp vs benchmark 5,40%</div>
+    </div>
+    <div class="kpi red">
+      <div class="kpi-label">Tasa anulación</div>
+      <div class="kpi-val danger">21,5%</div>
+      <div class="kpi-delta delta-dn">⚠ Umbral alerta ≥ 14%</div>
+    </div>
+    <div class="kpi green">
+      <div class="kpi-label">Pólizas vigentes</div>
+      <div class="kpi-val">39.968</div>
+      <div class="kpi-delta delta-up">↑ +6.581 vs Q1 2025</div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="left">
+
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">Tareas de equipo</span>
+          <span class="card-meta" id="task-count">5 tareas</span>
+        </div>
+        <div class="tab-row">
+          <button class="tab active" onclick="filterTasks('todas',this)">Todas</button>
+          <button class="tab" onclick="filterTasks('pendiente',this)">Pendientes</button>
+          <button class="tab" onclick="filterTasks('en-curso',this)">En curso</button>
+          <button class="tab" onclick="filterTasks('done',this)">Hechas</button>
+        </div>
+        <div class="task-list" id="task-list"></div>
+        <div class="add-task-row">
+          <input type="text" id="new-input" placeholder="Nueva tarea..." onkeydown="if(event.key==='Enter')addTask()">
+          <select id="new-owner">
+            <option value="JC">Juan Carlos</option>
+            <option value="MA">María A.</option>
+            <option value="PL">Pablo L.</option>
+            <option value="LG">Laura G.</option>
+            <option value="RV">Ramón V.</option>
+          </select>
+          <button class="btn-add" onclick="addTask()">+ Añadir</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">KPIs por oficina — Top 8</span>
+          <span class="card-meta">Q1 2026 · Primas Generales</span>
+        </div>
+        <div class="card-body">
+          <table class="oficina-table">
+            <thead>
+              <tr>
+                <th>Oficina</th>
+                <th>Primas Gen.</th>
+                <th>HSP R1%</th>
+                <th>Anulación</th>
+                <th>Preferentes</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody id="oficina-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+    <div class="right">
+
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">Alertas de negocio</span>
+        </div>
+        <div class="alert-list">
+          <div class="alert danger"><span class="alert-icon">⚠</span><span>Tasa anulación 21,5% — muy por encima del umbral (14%)</span></div>
+          <div class="alert warn"><span class="alert-icon">⚠</span><span>H.S.P. R2% 8,63% — revisar cobertura por oficina</span></div>
+          <div class="alert warn"><span class="alert-icon">⚠</span><span>Preferentes: verificar % por ramo vs objetivo 65%</span></div>
+          <div class="alert ok"><span class="alert-icon">✓</span><span>Primas Generales +23,8% — crecimiento sólido Q1</span></div>
+          <div class="alert ok"><span class="alert-icon">✓</span><span>Pólizas vigentes récord: 39.968 unidades</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">Progreso por área</span>
+        </div>
+        <div class="prog-section">
+          <div class="prog-item">
+            <div class="prog-head">
+              <span class="prog-label">Compliance / RGPD</span>
+              <span class="prog-pct" style="color:var(--amber)">60%</span>
+            </div>
+            <div class="prog-track"><div class="prog-fill" style="width:60%;background:var(--amber)"></div></div>
+          </div>
+          <div class="prog-item">
+            <div class="prog-head">
+              <span class="prog-label">Migración Enterprise</span>
+              <span class="prog-pct" style="color:var(--amber)">35%</span>
+            </div>
+            <div class="prog-track"><div class="prog-fill" style="width:35%;background:var(--amber)"></div></div>
+          </div>
+          <div class="prog-item">
+            <div class="prog-head">
+              <span class="prog-label">Objetivo preferentes</span>
+              <span class="prog-pct" style="color:var(--green)">72%</span>
+            </div>
+            <div class="prog-track"><div class="prog-fill" style="width:72%;background:var(--green)"></div></div>
+          </div>
+          <div class="prog-item">
+            <div class="prog-head">
+              <span class="prog-label">Reducción anulación</span>
+              <span class="prog-pct" style="color:var(--red)">21% → obj. 14%</span>
+            </div>
+            <div class="prog-track"><div class="prog-fill" style="width:33%;background:var(--red)"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">Documentos recientes</span>
+          <span class="card-meta">OneDrive / SharePoint</span>
+        </div>
+        <div class="doc-list">
+          <div class="doc-item">
+            <div class="doc-ico xl">XL</div>
+            <div>
+              <div class="doc-name">Estadísticas red Q1 2026.xlsx</div>
+              <div class="doc-sub">OneDrive NB21 · hace 2 días</div>
+            </div>
+            <span class="doc-arrow">↗</span>
+          </div>
+          <div class="doc-item">
+            <div class="doc-ico wd">W</div>
+            <div>
+              <div class="doc-name">Informe gestión red Q1 2026.docx</div>
+              <div class="doc-sub">SharePoint NB21 · hace 3 días</div>
+            </div>
+            <span class="doc-arrow">↗</span>
+          </div>
+          <div class="doc-item">
+            <div class="doc-ico xl">XL</div>
+            <div>
+              <div class="doc-name">KPIs oficinas Q1 2026.xlsx</div>
+              <div class="doc-sub">OneDrive NB21 · hace 1 semana</div>
+            </div>
+            <span class="doc-arrow">↗</span>
+          </div>
+          <div class="doc-item">
+            <div class="doc-ico wd">W</div>
+            <div>
+              <div class="doc-name">Protocolo Uso IA NB21 v2.docx</div>
+              <div class="doc-sub">SharePoint NB21 · hace 5 días</div>
+            </div>
+            <span class="doc-arrow">↗</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+var tasks = [
+  {id:1, text:'Revisar DPA Enterprise con DPO', owner:'JC', status:'en-curso', priority:'warn'},
+  {id:2, text:'Migración Teams → Enterprise (Art. 28 RGPD)', owner:'JC', status:'pendiente', priority:'info'},
+  {id:3, text:'Protocolo de Uso de IA — revisión final', owner:'MA', status:'en-curso', priority:'warn'},
+  {id:4, text:'Analizar tasa anulación Q1 por oficinas', owner:'PL', status:'pendiente', priority:'danger'},
+  {id:5, text:'Configurar conector Microsoft 365 / OneDrive', owner:'LG', status:'pendiente', priority:'neu'}
+];
+
+var oficinas = [
+  {nombre:'A Coruña Centro', primas:'1.842.300', hsp:6.2, anulacion:18.1, pref:71, ok:false},
+  {nombre:'Vigo', primas:'1.634.200', hsp:5.8, anulacion:15.4, pref:68, ok:false},
+  {nombre:'Santiago', primas:'1.410.500', hsp:5.4, anulacion:12.8, pref:73, ok:true},
+  {nombre:'Pontevedra', primas:'1.188.000', hsp:5.1, anulacion:22.3, pref:59, ok:false},
+  {nombre:'Ferrol', primas:'980.400', hsp:6.8, anulacion:11.2, pref:78, ok:true},
+  {nombre:'Ourense', primas:'876.300', hsp:4.9, anulacion:24.1, pref:55, ok:false},
+  {nombre:'Lugo', primas:'754.100', hsp:5.6, anulacion:13.5, pref:70, ok:true},
+  {nombre:'A Estrada', primas:'612.800', hsp:5.3, anulacion:19.8, pref:62, ok:false}
+];
+
+var avColors = {
+  JC: 'background:#DBEAFC;color:#185FA5',
+  MA: 'background:#E1F5EE;color:#0F6E56',
+  PL: 'background:#FFF3D6;color:#92600A',
+  LG: 'background:#F5C4B3;color:#712B13',
+  RV: 'background:#EEEDFE;color:#3C3489'
+};
+
+var currentFilter = 'todas';
+
+function renderTasks() {
+  var filtered = tasks.filter(function(t) {
+    if (currentFilter === 'todas') return true;
+    if (currentFilter === 'done') return t.status === 'done';
+    return t.status === currentFilter;
+  });
+  var html = '';
+  if (!filtered.length) {
+    html = '<div class="empty">Sin tareas en esta vista</div>';
+  } else {
+    filtered.forEach(function(t) {
+      var done = t.status === 'done';
+      var pillMap = {warn:'pill-warn', danger:'pill-danger', info:'pill-info', ok:'pill-ok', neu:'pill-neu'};
+      var labelMap = {warn:'En curso', danger:'Urgente', info:'Pendiente', ok:'Hecha', neu:'·'};
+      html += '<div class="task-item">'
+        + '<div class="chk' + (done?' done':'') + '" onclick="toggleTask(' + t.id + ')"></div>'
+        + '<div class="task-body">'
+        + '<div class="task-text' + (done?' done':'') + '">' + t.text + '</div>'
+        + '<div class="task-foot">'
+        + '<div class="av" style="' + (avColors[t.owner]||'background:#eee;color:#666') + '">' + t.owner + '</div>'
+        + (done ? '<span class="pill pill-ok">Hecha</span>' : '<span class="pill ' + pillMap[t.priority] + '">' + labelMap[t.priority] + '</span>')
+        + '</div>'
+        + '</div></div>';
+    });
+  }
+  document.getElementById('task-list').innerHTML = html;
+  document.getElementById('task-count').textContent = tasks.length + ' tareas';
+}
+
+function toggleTask(id) {
+  tasks = tasks.map(function(t) {
+    if (t.id === id) t.status = t.status === 'done' ? 'pendiente' : 'done';
+    return t;
+  });
+  renderTasks();
+}
+
+function filterTasks(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+  btn.classList.add('active');
+  renderTasks();
+}
+
+function addTask() {
+  var input = document.getElementById('new-input');
+  var owner = document.getElementById('new-owner').value;
+  var text = input.value.trim();
+  if (!text) return;
+  tasks.push({id: Date.now(), text: text, owner: owner, status: 'pendiente', priority: 'info'});
+  input.value = '';
+  renderTasks();
+}
+
+function renderOficinas() {
+  var html = '';
+  oficinas.forEach(function(o) {
+    var hspColor = o.hsp >= 5.4 ? 'var(--green)' : o.hsp >= 5.0 ? 'var(--amber)' : 'var(--red)';
+    var anulColor = o.anulacion <= 14 ? 'var(--green)' : o.anulacion <= 18 ? 'var(--amber)' : 'var(--red)';
+    var prefColor = o.pref >= 65 ? 'var(--green)' : 'var(--red)';
+    var barW = Math.min(100, Math.round(o.pref));
+    var barColor = o.pref >= 65 ? 'var(--green)' : 'var(--red)';
+    var estado = o.ok
+      ? '<span class="pill pill-ok">OK</span>'
+      : '<span class="pill pill-danger">Revisar</span>';
+    html += '<tr>'
+      + '<td style="font-weight:500">' + o.nombre + '</td>'
+      + '<td style="font-family:\'DM Mono\',monospace;font-size:11px">' + o.primas + ' €</td>'
+      + '<td style="color:' + hspColor + ';font-weight:500">' + o.hsp.toFixed(1) + '%</td>'
+      + '<td style="color:' + anulColor + ';font-weight:500">' + o.anulacion.toFixed(1) + '%</td>'
+      + '<td><span style="color:' + prefColor + ';font-weight:500">' + o.pref + '%</span> '
+      + '<div class="bar-wrap"><div class="bar-fill" style="width:' + barW + '%;background:' + barColor + '"></div></div></td>'
+      + '<td>' + estado + '</td>'
+      + '</tr>';
+  });
+  document.getElementById('oficina-tbody').innerHTML = html;
+}
+
+function handleSync() {
+  var dot = document.getElementById('sync-dot');
+  var label = document.getElementById('sync-label');
+  dot.style.background = '#F98E2B';
+  label.textContent = 'Actualizando...';
+  setTimeout(function() {
+    dot.style.background = '#4ade80';
+    label.textContent = 'Sincronizado';
+  }, 1500);
+}
+
+renderTasks();
+renderOficinas();
+</script>
+</body>
+</html>
