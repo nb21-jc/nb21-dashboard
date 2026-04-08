@@ -3,647 +3,536 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NB21 · Dashboard de Equipo</title>
+<title>NB21 · Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --nb-blue: #1B3A6B;
-  --nb-orange: #F98E2B;
-  --nb-teal: #244B5A;
-  --bg: #F4F3EF;
-  --surface: #FFFFFF;
-  --surface2: #EEEDE9;
-  --border: rgba(27,58,107,0.1);
-  --text: #1a1a18;
-  --text2: #6b6b66;
-  --text3: #9e9e99;
-  --green: #1D9E75;
-  --red: #D84040;
-  --amber: #BA7517;
-  --radius: 12px;
-  --radius-sm: 8px;
+:root{
+  --nb-blue:#1B3A6B;--nb-orange:#F98E2B;--nb-teal:#244B5A;
+  --bg:#F2F1ED;--surface:#FFF;--surface2:#ECEAE5;
+  --border:rgba(27,58,107,.09);--border2:rgba(27,58,107,.15);
+  --text:#1C1C1A;--text2:#6A6A65;--text3:#A0A09A;
+  --green:#1A9B6C;--red:#D03C3C;--amber:#B97215;--r:12px;--rs:8px
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  font-size: 14px;
-}
-.topbar {
-  background: var(--nb-blue);
-  padding: 0 24px;
-  height: 52px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-.topbar-brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.topbar-logo {
-  display: flex;
-  gap: 4px;
-  align-items: center;
-}
-.logo-sq {
-  width: 8px; height: 8px; border-radius: 2px;
-}
-.topbar-title {
-  font-size: 15px;
-  font-weight: 500;
-  color: #fff;
-  letter-spacing: 0.01em;
-}
-.topbar-sub {
-  font-size: 12px;
-  color: rgba(255,255,255,0.5);
-  margin-left: 8px;
-  padding-left: 8px;
-  border-left: 1px solid rgba(255,255,255,0.15);
-}
-.topbar-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.sync-pill {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 20px;
-  padding: 4px 10px;
-  font-size: 11px;
-  color: rgba(255,255,255,0.8);
-  cursor: pointer;
-  transition: background .15s;
-}
-.sync-pill:hover { background: rgba(255,255,255,0.18); }
-.sync-dot { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; }
-.period-tag {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  color: var(--nb-orange);
-  background: rgba(249,142,43,0.12);
-  border: 1px solid rgba(249,142,43,0.2);
-  border-radius: 4px;
-  padding: 3px 8px;
-}
-.main { padding: 20px 24px 32px; max-width: 1200px; }
-
-.kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0,1fr));
-  gap: 10px;
-  margin-bottom: 16px;
-}
-.kpi {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px 18px;
-  position: relative;
-  overflow: hidden;
-}
-.kpi::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 3px;
-}
-.kpi.green::before { background: var(--green); }
-.kpi.amber::before { background: var(--amber); }
-.kpi.red::before { background: var(--red); }
-.kpi.blue::before { background: var(--nb-blue); }
-.kpi-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
-.kpi-val { font-size: 26px; font-weight: 600; color: var(--text); line-height: 1; margin-bottom: 6px; }
-.kpi-val.danger { color: var(--red); }
-.kpi-delta { font-size: 12px; display: flex; align-items: center; gap: 4px; }
-.delta-up { color: var(--green); }
-.delta-dn { color: var(--red); }
-.delta-warn { color: var(--amber); }
-
-.layout { display: grid; grid-template-columns: 1fr 380px; gap: 14px; align-items: start; }
-.left { display: flex; flex-direction: column; gap: 14px; }
-.right { display: flex; flex-direction: column; gap: 14px; }
-
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-.card-head {
-  padding: 14px 18px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.card-title { font-size: 13px; font-weight: 500; color: var(--text); }
-.card-meta { font-size: 11px; color: var(--text3); }
-.card-body { padding: 0; }
-
-.tab-row {
-  display: flex;
-  gap: 0;
-  padding: 10px 18px 0;
-  border-bottom: 1px solid var(--border);
-}
-.tab {
-  font-size: 12px;
-  padding: 6px 12px;
-  cursor: pointer;
-  border: none;
-  background: none;
-  color: var(--text3);
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
-  transition: all .15s;
-  font-family: 'DM Sans', sans-serif;
-}
-.tab:hover { color: var(--text2); }
-.tab.active { color: var(--nb-blue); border-bottom-color: var(--nb-orange); font-weight: 500; }
-
-.task-list { padding: 0 18px; }
-.task-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--border);
-}
-.task-item:last-child { border-bottom: none; }
-.chk {
-  width: 16px; height: 16px;
-  border: 1.5px solid var(--border);
-  border-radius: 4px;
-  flex-shrink: 0;
-  margin-top: 1px;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: all .15s;
-}
-.chk:hover { border-color: var(--nb-blue); }
-.chk.done { background: var(--green); border-color: var(--green); }
-.chk.done::after { content: '✓'; font-size: 10px; color: white; }
-.task-body { flex: 1; }
-.task-text { font-size: 13px; color: var(--text); line-height: 1.4; margin-bottom: 4px; }
-.task-text.done { color: var(--text3); text-decoration: line-through; }
-.task-foot { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-.av {
-  width: 18px; height: 18px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 8px; font-weight: 600;
-  flex-shrink: 0;
-}
-.pill {
-  font-size: 10px; font-weight: 500;
-  padding: 2px 7px; border-radius: 20px;
-  white-space: nowrap;
-}
-.pill-warn { background: #FFF3D6; color: #92600A; }
-.pill-danger { background: #FDEAEA; color: #A32D2D; }
-.pill-info { background: #E6F1FB; color: #185FA5; }
-.pill-ok { background: #E1F5EE; color: #0F6E56; }
-.pill-neu { background: var(--surface2); color: var(--text2); }
-
-.add-task-row {
-  padding: 10px 18px 14px;
-  border-top: 1px solid var(--border);
-  display: flex;
-  gap: 8px;
-}
-.add-task-row input {
-  flex: 1;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 12px;
-  padding: 7px 10px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--bg);
-  color: var(--text);
-  outline: none;
-}
-.add-task-row input:focus { border-color: var(--nb-blue); }
-.add-task-row select {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 12px;
-  padding: 7px 8px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--bg);
-  color: var(--text);
-  outline: none;
-}
-.btn-add {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 12px;
-  padding: 7px 14px;
-  border: 1px solid var(--nb-blue);
-  border-radius: var(--radius-sm);
-  background: var(--nb-blue);
-  color: white;
-  cursor: pointer;
-  font-weight: 500;
-  transition: opacity .15s;
-}
-.btn-add:hover { opacity: 0.85; }
-
-.oficina-table { width: 100%; border-collapse: collapse; }
-.oficina-table th {
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text3);
-  padding: 8px 18px;
-  text-align: left;
-  border-bottom: 1px solid var(--border);
-  font-weight: 500;
-}
-.oficina-table td {
-  padding: 9px 18px;
-  font-size: 12px;
-  border-bottom: 1px solid var(--border);
-  color: var(--text);
-}
-.oficina-table tr:last-child td { border-bottom: none; }
-.oficina-table tr:hover td { background: var(--bg); }
-.bar-wrap { width: 60px; height: 4px; background: var(--surface2); border-radius: 2px; display: inline-block; vertical-align: middle; }
-.bar-fill { height: 100%; border-radius: 2px; }
-
-.alert-list { padding: 12px 18px; display: flex; flex-direction: column; gap: 8px; }
-.alert {
-  display: flex; align-items: flex-start; gap: 8px;
-  padding: 9px 12px;
-  border-radius: var(--radius-sm);
-  font-size: 12px;
-  line-height: 1.4;
-}
-.alert-icon { font-size: 13px; flex-shrink: 0; margin-top: 0px; }
-.alert.danger { background: #FDEAEA; color: #7A2020; }
-.alert.warn { background: #FFF3D6; color: #7A4A0A; }
-.alert.ok { background: #E1F5EE; color: #0A4D36; }
-
-.doc-list { padding: 0 18px; }
-.doc-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 9px 0;
-  border-bottom: 1px solid var(--border);
-  cursor: pointer;
-  transition: opacity .15s;
-}
-.doc-item:last-child { border-bottom: none; }
-.doc-item:hover { opacity: 0.75; }
-.doc-ico {
-  width: 30px; height: 30px; border-radius: 6px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 600; flex-shrink: 0;
-  font-family: 'DM Mono', monospace;
-}
-.xl { background: #DBEAFC; color: #185FA5; }
-.wd { background: #D6F0E6; color: #0F6E56; }
-.doc-name { font-size: 12px; color: var(--text); flex: 1; line-height: 1.3; }
-.doc-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
-.doc-arrow { font-size: 14px; color: var(--text3); }
-
-.prog-section { padding: 14px 18px; display: flex; flex-direction: column; gap: 12px; }
-.prog-item {}
-.prog-head { display: flex; justify-content: space-between; margin-bottom: 5px; }
-.prog-label { font-size: 12px; color: var(--text2); }
-.prog-pct { font-size: 12px; font-weight: 500; }
-.prog-track { height: 5px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
-.prog-fill { height: 100%; border-radius: 3px; transition: width .5s ease; }
-
-.empty { text-align: center; padding: 20px; font-size: 12px; color: var(--text3); }
-
-@media (max-width: 900px) {
-  .layout { grid-template-columns: 1fr; }
-  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-  .main { padding: 14px 16px 24px; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
+.topbar{background:var(--nb-blue);height:50px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:sticky;top:0;z-index:100}
+.tb-left{display:flex;align-items:center;gap:8px}
+.tb-dots{display:flex;gap:3px}
+.tb-dot{width:8px;height:8px;border-radius:2px}
+.tb-title{font-size:14px;font-weight:500;color:#fff}
+.tb-sep{width:1px;height:16px;background:rgba(255,255,255,.2);margin:0 6px}
+.tb-sub{font-size:12px;color:rgba(255,255,255,.5)}
+.tb-right{display:flex;align-items:center;gap:8px}
+.tb-period{font-family:'DM Mono',monospace;font-size:11px;color:var(--nb-orange);background:rgba(249,142,43,.12);border:1px solid rgba(249,142,43,.2);border-radius:4px;padding:3px 8px}
+.tb-sync{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:4px 10px;font-size:11px;color:rgba(255,255,255,.7);cursor:pointer}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:#4ade80}
+.navtabs{background:var(--surface);border-bottom:1px solid var(--border);display:flex;padding:0 20px;overflow-x:auto}
+.navtab{font-size:13px;padding:12px 16px;cursor:pointer;border:none;background:none;color:var(--text3);border-bottom:2px solid transparent;margin-bottom:-1px;font-family:'DM Sans',sans-serif;transition:all .15s;white-space:nowrap}
+.navtab:hover{color:var(--text2)}
+.navtab.active{color:var(--nb-blue);border-bottom-color:var(--nb-orange);font-weight:500}
+.main{padding:18px 20px 40px;max-width:1300px}
+.section{display:none}
+.section.active{display:block;animation:fi .2s ease}
+@keyframes fi{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.kpi-grid-5{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:15px 16px;position:relative;overflow:hidden}
+.kpi::after{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kpi.g::after{background:var(--green)}.kpi.a::after{background:var(--amber)}.kpi.r::after{background:var(--red)}.kpi.b::after{background:var(--nb-blue)}.kpi.o::after{background:var(--nb-orange)}
+.kpi-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+.kpi-val{font-size:22px;font-weight:600;color:var(--text);line-height:1;margin-bottom:5px}
+.kpi-val.danger{color:var(--red)}.kpi-val.warn{color:var(--amber)}.kpi-val.ok{color:var(--green)}
+.kpi-delta{font-size:12px}
+.up{color:var(--green)}.dn{color:var(--red)}.wn{color:var(--amber)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.full{margin-bottom:14px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.ch{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.ct{font-size:13px;font-weight:500;color:var(--text)}
+.cm{font-size:11px;color:var(--text3)}
+.rtable{width:100%;border-collapse:collapse}
+.rtable th{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);padding:8px 16px;text-align:left;border-bottom:1px solid var(--border);font-weight:500;white-space:nowrap}
+.rtable td{padding:9px 16px;font-size:12px;border-bottom:1px solid var(--border);vertical-align:middle}
+.rtable tr:last-child td{border-bottom:none}
+.rtable tr:hover td{background:var(--bg)}
+.mono{font-family:'DM Mono',monospace;font-size:11px}
+.pill{font-size:10px;font-weight:500;padding:2px 7px;border-radius:20px;white-space:nowrap;display:inline-block}
+.pill-ok{background:#E0F5EC;color:#0A5C3A}
+.pill-warn{background:#FFF3D6;color:#7A4A0A}
+.pill-danger{background:#FDEAEA;color:#7A2020}
+.pill-neu{background:var(--surface2);color:var(--text2)}
+.pill-info{background:#E6F1FB;color:#185FA5}
+.bar-w{height:4px;background:var(--surface2);border-radius:2px;display:inline-block;vertical-align:middle}
+.bar-f{height:100%;border-radius:2px}
+.alert-box{display:flex;align-items:flex-start;gap:8px;padding:8px 11px;border-radius:var(--rs);font-size:12px;line-height:1.4}
+.alert-box.danger{background:#FDEAEA;color:#7A2020}
+.alert-box.warn{background:#FFF3D6;color:#7A4A0A}
+.alert-box.ok{background:#E0F5EC;color:#0A5C3A}
+/* SINIESTROS */
+.tram-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:10px;padding:14px 16px}
+.tram-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--rs);padding:12px 14px}
+.tram-head{display:flex;align-items:center;gap:7px;margin-bottom:8px}
+.tram-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0}
+.tram-name{font-size:11px;font-weight:500;color:var(--text)}
+.tram-count{font-size:20px;font-weight:600;color:var(--text);line-height:1}
+.tram-fp{font-size:11px;color:var(--red);font-weight:500;margin-top:1px}
+.tram-ok{font-size:11px;color:var(--green);margin-top:1px}
+.tram-bar{height:3px;background:var(--border2);border-radius:2px;margin-top:8px;overflow:hidden}
+.tram-fill{height:100%;border-radius:2px}
+/* AGENDA */
+.agenda-grid{display:flex;flex-direction:column;gap:8px;padding:14px 16px}
+.agenda-item{display:flex;gap:12px;align-items:flex-start;padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--rs)}
+.agenda-date{min-width:48px;text-align:center;flex-shrink:0}
+.agenda-day{font-size:22px;font-weight:600;color:var(--nb-blue);line-height:1}
+.agenda-month{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3)}
+.agenda-body{flex:1}
+.agenda-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px}
+.agenda-meta{font-size:11px;color:var(--text3);display:flex;gap:8px;flex-wrap:wrap}
+.agenda-badge{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:500}
+.ab-cia{background:#E6F1FB;color:#185FA5}
+.ab-int{background:#E0F5EC;color:#0A5C3A}
+.ab-per{background:#FFF3D6;color:#7A4A0A}
+.ab-teams{background:#EEEDFE;color:#3C3489}
+@media(max-width:900px){
+  .kpi-grid,.kpi-grid-5{grid-template-columns:repeat(2,1fr)}
+  .two{grid-template-columns:1fr}
+  .main{padding:12px 14px 24px}
+  .tram-grid{grid-template-columns:repeat(2,1fr)}
 }
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="topbar-brand">
-    <div class="topbar-logo">
-      <div class="logo-sq" style="background:#F98E2B"></div>
-      <div class="logo-sq" style="background:rgba(255,255,255,0.4)"></div>
+  <div class="tb-left">
+    <div class="tb-dots">
+      <div class="tb-dot" style="background:#F98E2B"></div>
+      <div class="tb-dot" style="background:rgba(255,255,255,.3)"></div>
     </div>
-    <span class="topbar-title">NB21 · Dashboard de Equipo</span>
-    <span class="topbar-sub">Norte Broker, S.L.</span>
+    <span class="tb-title">NB21 · Dashboard</span>
+    <div class="tb-sep"></div>
+    <span class="tb-sub">Norte Broker, S.L.</span>
   </div>
-  <div class="topbar-right">
-    <span class="period-tag">Q1 2026</span>
-    <div class="sync-pill" onclick="handleSync()">
-      <div class="sync-dot" id="sync-dot"></div>
-      <span id="sync-label">Sincronizado</span>
-    </div>
+  <div class="tb-right">
+    <span class="tb-period">Q1 2026 · 64 oficinas</span>
+    <div class="tb-sync"><div class="sync-dot"></div><span>Actualizado</span></div>
   </div>
+</div>
+
+<div class="navtabs">
+  <button class="navtab active" onclick="showSec('recibos',this)">Recibos</button>
+  <button class="navtab" onclick="showSec('polizas',this)">Pólizas</button>
+  <button class="navtab" onclick="showSec('siniestros',this)">Siniestros</button>
+  <button class="navtab" onclick="showSec('agenda',this)">Agenda</button>
 </div>
 
 <div class="main">
-  <div class="kpi-grid">
-    <div class="kpi green">
-      <div class="kpi-label">Primas Generales</div>
-      <div class="kpi-val">15,67M€</div>
-      <div class="kpi-delta delta-up">↑ +23,8% vs Q1 2025</div>
+
+  <!-- ══════════════ RECIBOS ══════════════ -->
+  <div class="section active" id="sec-recibos">
+    <div class="kpi-grid">
+      <div class="kpi g">
+        <div class="kpi-label">Prima neta Generales</div>
+        <div class="kpi-val ok">15,67M€</div>
+        <div class="kpi-delta up">↑ +23,8% vs Q1 2025 (12,66M€)</div>
+      </div>
+      <div class="kpi b">
+        <div class="kpi-label">Comisión Total</div>
+        <div class="kpi-val">2,82M€</div>
+        <div class="kpi-delta up">17,97% · ↑ +0,49 pp vs 2025</div>
+      </div>
+      <div class="kpi g">
+        <div class="kpi-label">H.S.P.</div>
+        <div class="kpi-val ok">881.782 €</div>
+        <div class="kpi-delta up">5,63% · ↑ +0,77 pp vs 2025 (4,86%)</div>
+      </div>
+      <div class="kpi a">
+        <div class="kpi-label">Tasa anulación</div>
+        <div class="kpi-val warn">21,51%</div>
+        <div class="kpi-delta up">↓ -0,80 pp vs Q1 2025 (22,31%)</div>
+      </div>
     </div>
-    <div class="kpi blue">
-      <div class="kpi-label">H.S.P. R1%</div>
-      <div class="kpi-val">5,63%</div>
-      <div class="kpi-delta delta-up">↑ +0,8 pp vs benchmark 5,40%</div>
+
+    <div class="card full">
+      <div class="ch">
+        <span class="ct">Comparativa Q1 2026 vs Q1 2025 — Total red</span>
+        <span class="cm">64 oficinas · Seguros Generales sin Vida</span>
+      </div>
+      <table class="rtable">
+        <thead>
+          <tr><th>Indicador</th><th>Q1 2025</th><th>Q1 2026</th><th>Variación</th><th>Estado</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:500">Prima neta Generales</td>
+            <td class="mono">12.658.024,46 €</td>
+            <td class="mono" style="font-weight:500">15.672.902,16 €</td>
+            <td class="mono" style="color:var(--green)">↑ +23,8%</td>
+            <td><span class="pill pill-ok">Excelente</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:500">Comisión Total</td>
+            <td class="mono">2.212.456,95 € <span style="color:var(--text3)">(17,48%)</span></td>
+            <td class="mono" style="font-weight:500">2.816.181,67 € <span style="color:var(--green)">(17,97%)</span></td>
+            <td class="mono" style="color:var(--green)">↑ +27,3% · +0,49 pp</td>
+            <td><span class="pill pill-ok">OK</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:500">H.S.P.</td>
+            <td class="mono">614.950,46 € <span style="color:var(--text3)">(4,86%)</span></td>
+            <td class="mono" style="font-weight:500">881.781,87 € <span style="color:var(--green)">(5,63%)</span></td>
+            <td class="mono" style="color:var(--green)">↑ +43,4% · +0,77 pp</td>
+            <td><span class="pill pill-ok">↑ benchmark 5,40%</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:500">Prima anulada</td>
+            <td class="mono">3.634.362,59 € <span style="color:var(--text3)">(22,31%)</span></td>
+            <td class="mono" style="font-weight:500;color:var(--amber)">4.294.927,15 € <span style="color:var(--amber)">(21,51%)</span></td>
+            <td class="mono" style="color:var(--green)">↓ -0,80 pp tasa</td>
+            <td><span class="pill pill-danger">⚠ &gt;14%</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:500">Pólizas en vigor</td>
+            <td class="mono">33.387</td>
+            <td class="mono" style="font-weight:500">39.968</td>
+            <td class="mono" style="color:var(--green)">↑ +6.581 (+19,7%)</td>
+            <td><span class="pill pill-ok">Récord</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:500">Prima Vida</td>
+            <td class="mono">1.706.644,93 €</td>
+            <td class="mono" style="font-weight:500">3.104.859,97 €</td>
+            <td class="mono" style="color:var(--green)">↑ +81,9%</td>
+            <td><span class="pill pill-ok">Excelente</span></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-    <div class="kpi red">
-      <div class="kpi-label">Tasa anulación</div>
-      <div class="kpi-val danger">21,5%</div>
-      <div class="kpi-delta delta-dn">⚠ Umbral alerta ≥ 14%</div>
+
+    <div class="card full">
+      <div class="ch">
+        <span class="ct">Por grupo de ramo — Q1 2026 vs Q1 2025</span>
+        <span class="cm">5 grupos · clasificación eBroker</span>
+      </div>
+      <table class="rtable">
+        <thead>
+          <tr><th>Grupo · Ramos incluidos</th><th>Prima Q1 2025</th><th>Prima Q1 2026</th><th>Var. prima</th><th>HSP 2026</th><th>Peso s/total</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div style="font-weight:500;margin-bottom:2px">Automóvil</div><div style="font-size:10px;color:var(--text3)">Autos Cat.1 · Cat.2 · Cat.3 · Sureca</div></td>
+            <td class="mono">6.120.286,84 €</td>
+            <td class="mono" style="font-weight:500">7.746.825,84 €</td>
+            <td class="mono" style="color:var(--green)">↑ +26,6%</td>
+            <td class="mono" style="color:var(--green)">6,15%</td>
+            <td><div class="bar-w" style="width:110px"><div class="bar-f" style="width:100%;background:var(--nb-blue)"></div></div> <span style="font-size:10px;color:var(--text3)">49,4%</span></td>
+          </tr>
+          <tr>
+            <td><div style="font-weight:500;margin-bottom:2px">Multirriesgos</div><div style="font-size:10px;color:var(--text3)">Multirriesgos · Incendios</div></td>
+            <td class="mono">3.307.419,79 €</td>
+            <td class="mono" style="font-weight:500">3.959.440,62 €</td>
+            <td class="mono" style="color:var(--green)">↑ +19,7%</td>
+            <td class="mono" style="color:var(--green)">6,18%</td>
+            <td><div class="bar-w" style="width:110px"><div class="bar-f" style="width:51%;background:var(--nb-blue)"></div></div> <span style="font-size:10px;color:var(--text3)">25,3%</span></td>
+          </tr>
+          <tr>
+            <td><div style="font-weight:500;margin-bottom:2px">R.C. / Empresas</div><div style="font-size:10px;color:var(--text3)">R.C. · P.Beneficios · Caución · Crédito · Ingeniería · Transportes</div></td>
+            <td class="mono">1.638.528,97 €</td>
+            <td class="mono" style="font-weight:500">1.894.852,53 €</td>
+            <td class="mono" style="color:var(--green)">↑ +15,6%</td>
+            <td class="mono" style="color:var(--green)">5,28%</td>
+            <td><div class="bar-w" style="width:110px"><div class="bar-f" style="width:24%;background:var(--nb-teal)"></div></div> <span style="font-size:10px;color:var(--text3)">12,1%</span></td>
+          </tr>
+          <tr>
+            <td><div style="font-weight:500;margin-bottom:2px">Salud y Accidentes</div><div style="font-size:10px;color:var(--text3)">A.Sanitaria · Accidentes · Dependencia · Asivia</div></td>
+            <td class="mono">1.266.970,19 €</td>
+            <td class="mono" style="font-weight:500">1.683.306,69 €</td>
+            <td class="mono" style="color:var(--green)">↑ +32,9%</td>
+            <td class="mono" style="color:var(--amber)">1,98%</td>
+            <td><div class="bar-w" style="width:110px"><div class="bar-f" style="width:22%;background:var(--nb-teal)"></div></div> <span style="font-size:10px;color:var(--text3)">10,7%</span></td>
+          </tr>
+          <tr>
+            <td><div style="font-weight:500;margin-bottom:2px">Otros</div><div style="font-size:10px;color:var(--text3)">Decesos · P.Jurídica · Agroseguro · Otros Ramos</div></td>
+            <td class="mono">324.818,67 €</td>
+            <td class="mono" style="font-weight:500">388.476,48 €</td>
+            <td class="mono" style="color:var(--green)">↑ +19,6%</td>
+            <td class="mono" style="color:var(--green)">7,05%</td>
+            <td><div class="bar-w" style="width:110px"><div class="bar-f" style="width:5%;background:var(--nb-teal)"></div></div> <span style="font-size:10px;color:var(--text3)">2,5%</span></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-    <div class="kpi green">
-      <div class="kpi-label">Pólizas vigentes</div>
-      <div class="kpi-val">39.968</div>
-      <div class="kpi-delta delta-up">↑ +6.581 vs Q1 2025</div>
+
+    <div class="two">
+      <div class="card">
+        <div class="ch"><span class="ct">Alertas</span></div>
+        <div style="padding:12px 16px;display:flex;flex-direction:column;gap:7px">
+          <div class="alert-box ok"><span>✓</span><span>Prima Generales +23,8% — crecimiento sólido en todos los grupos</span></div>
+          <div class="alert-box ok"><span>✓</span><span>HSP 5,63% — supera el benchmark 5,40% (+0,77 pp)</span></div>
+          <div class="alert-box ok"><span>✓</span><span>Pólizas vigentes récord: 39.968 (+19,7%)</span></div>
+          <div class="alert-box ok"><span>✓</span><span>Vida +81,9% — AXA Vida lidera con 1,31M€</span></div>
+          <div class="alert-box danger"><span>⚠</span><span>Tasa anulación 21,51% — muy por encima del umbral (14%)</span></div>
+          <div class="alert-box warn"><span>⚠</span><span>Salud y Accidentes: HSP 1,98% — muy por debajo del benchmark</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ch"><span class="ct">Vida por compañía</span><span class="cm">Q1 2026 vs Q1 2025</span></div>
+        <table class="rtable">
+          <thead><tr><th>Compañía</th><th>Q1 2026</th><th>Var.</th><th></th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:500">★ AXA Vida</td><td class="mono">1.305.187 €</td><td class="mono" style="color:var(--green)">+925,7%</td><td><span class="pill pill-ok">★ Pref.</span></td></tr>
+            <tr><td style="font-weight:500">Santa Lucía</td><td class="mono">710.133 €</td><td class="mono" style="color:var(--green)">+534,7%</td><td><span class="pill pill-neu">—</span></td></tr>
+            <tr><td style="font-weight:500">FIATC</td><td class="mono">529.131 €</td><td class="mono" style="color:var(--red)">-4,5%</td><td><span class="pill pill-neu">—</span></td></tr>
+            <tr><td style="font-weight:500">SURNE</td><td class="mono">173.505 €</td><td class="mono" style="color:var(--red)">-33,1%</td><td><span class="pill pill-warn">↓</span></td></tr>
+            <tr><td style="font-weight:500">★ Allianz</td><td class="mono">165.927 €</td><td class="mono" style="color:var(--red)">-62,5%</td><td><span class="pill pill-danger">⚠ Pref.</span></td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
-  <div class="layout">
-    <div class="left">
-
-      <div class="card">
-        <div class="card-head">
-          <span class="card-title">Tareas de equipo</span>
-          <span class="card-meta" id="task-count">5 tareas</span>
-        </div>
-        <div class="tab-row">
-          <button class="tab active" onclick="filterTasks('todas',this)">Todas</button>
-          <button class="tab" onclick="filterTasks('pendiente',this)">Pendientes</button>
-          <button class="tab" onclick="filterTasks('en-curso',this)">En curso</button>
-          <button class="tab" onclick="filterTasks('done',this)">Hechas</button>
-        </div>
-        <div class="task-list" id="task-list"></div>
-        <div class="add-task-row">
-          <input type="text" id="new-input" placeholder="Nueva tarea..." onkeydown="if(event.key==='Enter')addTask()">
-          <select id="new-owner">
-            <option value="JC">Juan Carlos</option>
-            <option value="MA">María A.</option>
-            <option value="PL">Pablo L.</option>
-            <option value="LG">Laura G.</option>
-            <option value="RV">Ramón V.</option>
-          </select>
-          <button class="btn-add" onclick="addTask()">+ Añadir</button>
-        </div>
+  <!-- ══════════════ PÓLIZAS ══════════════ -->
+  <div class="section" id="sec-polizas">
+    <div class="kpi-grid-5">
+      <div class="kpi g">
+        <div class="kpi-label">Automóvil</div>
+        <div class="kpi-val ok">69.716</div>
+        <div class="kpi-delta up">98,6% en vigor</div>
       </div>
-
-      <div class="card">
-        <div class="card-head">
-          <span class="card-title">KPIs por oficina — Top 8</span>
-          <span class="card-meta">Q1 2026 · Primas Generales</span>
-        </div>
-        <div class="card-body">
-          <table class="oficina-table">
-            <thead>
-              <tr>
-                <th>Oficina</th>
-                <th>Primas Gen.</th>
-                <th>HSP R1%</th>
-                <th>Anulación</th>
-                <th>Preferentes</th>
-                <th>Estado</th>
-              </tr>
-            </thead>
-            <tbody id="oficina-tbody"></tbody>
-          </table>
-        </div>
+      <div class="kpi b">
+        <div class="kpi-label">Multirriesgos</div>
+        <div class="kpi-val">31.104</div>
+        <div class="kpi-delta up">99,1% en vigor</div>
       </div>
-
+      <div class="kpi b">
+        <div class="kpi-label">R.C. / Empresas</div>
+        <div class="kpi-val">9.702</div>
+        <div class="kpi-delta up">98,9% en vigor</div>
+      </div>
+      <div class="kpi b">
+        <div class="kpi-label">Salud y Accidentes</div>
+        <div class="kpi-val">8.736</div>
+        <div class="kpi-delta up">98,2% en vigor</div>
+      </div>
+      <div class="kpi b">
+        <div class="kpi-label">Otros</div>
+        <div class="kpi-val">6.009</div>
+        <div class="kpi-delta up">98,6% en vigor</div>
+      </div>
     </div>
-    <div class="right">
-
-      <div class="card">
-        <div class="card-head">
-          <span class="card-title">Alertas de negocio</span>
-        </div>
-        <div class="alert-list">
-          <div class="alert danger"><span class="alert-icon">⚠</span><span>Tasa anulación 21,5% — muy por encima del umbral (14%)</span></div>
-          <div class="alert warn"><span class="alert-icon">⚠</span><span>H.S.P. R2% 8,63% — revisar cobertura por oficina</span></div>
-          <div class="alert warn"><span class="alert-icon">⚠</span><span>Preferentes: verificar % por ramo vs objetivo 65%</span></div>
-          <div class="alert ok"><span class="alert-icon">✓</span><span>Primas Generales +23,8% — crecimiento sólido Q1</span></div>
-          <div class="alert ok"><span class="alert-icon">✓</span><span>Pólizas vigentes récord: 39.968 unidades</span></div>
-        </div>
+    <div class="card full">
+      <div class="ch">
+        <span class="ct">Pólizas por grupo de ramo</span>
+        <span class="cm">Total cartera: 126.860 pólizas</span>
       </div>
-
-      <div class="card">
-        <div class="card-head">
-          <span class="card-title">Progreso por área</span>
-        </div>
-        <div class="prog-section">
-          <div class="prog-item">
-            <div class="prog-head">
-              <span class="prog-label">Compliance / RGPD</span>
-              <span class="prog-pct" style="color:var(--amber)">60%</span>
-            </div>
-            <div class="prog-track"><div class="prog-fill" style="width:60%;background:var(--amber)"></div></div>
-          </div>
-          <div class="prog-item">
-            <div class="prog-head">
-              <span class="prog-label">Migración Enterprise</span>
-              <span class="prog-pct" style="color:var(--amber)">35%</span>
-            </div>
-            <div class="prog-track"><div class="prog-fill" style="width:35%;background:var(--amber)"></div></div>
-          </div>
-          <div class="prog-item">
-            <div class="prog-head">
-              <span class="prog-label">Objetivo preferentes</span>
-              <span class="prog-pct" style="color:var(--green)">72%</span>
-            </div>
-            <div class="prog-track"><div class="prog-fill" style="width:72%;background:var(--green)"></div></div>
-          </div>
-          <div class="prog-item">
-            <div class="prog-head">
-              <span class="prog-label">Reducción anulación</span>
-              <span class="prog-pct" style="color:var(--red)">21% → obj. 14%</span>
-            </div>
-            <div class="prog-track"><div class="prog-fill" style="width:33%;background:var(--red)"></div></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-head">
-          <span class="card-title">Documentos recientes</span>
-          <span class="card-meta">OneDrive / SharePoint</span>
-        </div>
-        <div class="doc-list">
-          <div class="doc-item">
-            <div class="doc-ico xl">XL</div>
-            <div>
-              <div class="doc-name">Estadísticas red Q1 2026.xlsx</div>
-              <div class="doc-sub">OneDrive NB21 · hace 2 días</div>
-            </div>
-            <span class="doc-arrow">↗</span>
-          </div>
-          <div class="doc-item">
-            <div class="doc-ico wd">W</div>
-            <div>
-              <div class="doc-name">Informe gestión red Q1 2026.docx</div>
-              <div class="doc-sub">SharePoint NB21 · hace 3 días</div>
-            </div>
-            <span class="doc-arrow">↗</span>
-          </div>
-          <div class="doc-item">
-            <div class="doc-ico xl">XL</div>
-            <div>
-              <div class="doc-name">KPIs oficinas Q1 2026.xlsx</div>
-              <div class="doc-sub">OneDrive NB21 · hace 1 semana</div>
-            </div>
-            <span class="doc-arrow">↗</span>
-          </div>
-          <div class="doc-item">
-            <div class="doc-ico wd">W</div>
-            <div>
-              <div class="doc-name">Protocolo Uso IA NB21 v2.docx</div>
-              <div class="doc-sub">SharePoint NB21 · hace 5 días</div>
-            </div>
-            <span class="doc-arrow">↗</span>
-          </div>
-        </div>
-      </div>
-
+      <table class="rtable">
+        <thead><tr><th>Grupo · Ramos incluidos</th><th>En vigor</th><th>Total cartera</th><th>% vigor</th><th>Peso relativo</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><div style="font-weight:500;margin-bottom:2px">Automóvil</div><div style="font-size:10px;color:var(--text3)">Autos Cat.1 · Cat.2 · Cat.3 · Sureca</div></td>
+            <td class="mono" style="color:var(--green);font-weight:500">69.716</td><td class="mono">70.684</td>
+            <td class="mono" style="color:var(--green)">98,6%</td>
+            <td><div class="bar-w" style="width:110px"><div class="bar-f" style="width:100%;background:var(--nb-blue)"></div></div> <span style="font-size:10px;color:var(--text3)">55,7%</span></td>
+          </tr>
+          <tr>
+            <td><div style="font-weight:500;margin-bottom:2px">Multirriesgos</div><div style="font-size:10px;color:var(--text3)">Multirriesgos · Incendios</div></td>
+            <td class="mono" style="color:var(--green);font-weight:500">31.104</td><td class="mono">31.376</td>
+            <td class="mono" style="color:var(--green)">99,1%</td>
+            <td><div class="bar-w" style="width:110px"><div class="bar-f" style="width:44%;background:var(--nb-blue)"></div></div> <span style="font-size:10px;color:var(--text3)">24,7%</span></td>
+          </tr>
+          <tr>
+            <td><div style="font-weight:500;margin-bottom:2px">R.C. / Empresas</div><div style="font-size:10px;color:var(--text3)">R.C. · P.Beneficios · Caución · Crédito · Ingeniería · Transportes</div></td>
+            <td class="mono" style="color:var(--green);font-weight:500">9.702</td><td class="mono">9.810</td>
+            <td class="mono" style="color:var(--green)">98,9%</td>
+            <td><div class="bar-w" style="width:110px"><div class="bar-f" style="width:14%;background:var(--nb-teal)"></div></div> <span style="font-size:10px;color:var(--text3)">7,7%</span></td>
+          </tr>
+          <tr>
+            <td><div style="font-weight:500;margin-bottom:2px">Salud y Accidentes</div><div style="font-size:10px;color:var(--text3)">A.Sanitaria · Accidentes · Dependencia · Asivia</div></td>
+            <td class="mono" style="color:var(--green);font-weight:500">8.736</td><td class="mono">8.896</td>
+            <td class="mono" style="color:var(--amber)">98,2%</td>
+            <td><div class="bar-w" style="width:110px"><div class="bar-f" style="width:12%;background:var(--nb-teal)"></div></div> <span style="font-size:10px;color:var(--text3)">7,0%</span></td>
+          </tr>
+          <tr>
+            <td><div style="font-weight:500;margin-bottom:2px">Otros</div><div style="font-size:10px;color:var(--text3)">Decesos · P.Jurídica · Agroseguro · Otros Ramos</div></td>
+            <td class="mono" style="color:var(--green);font-weight:500">6.009</td><td class="mono">6.094</td>
+            <td class="mono" style="color:var(--green)">98,6%</td>
+            <td><div class="bar-w" style="width:110px"><div class="bar-f" style="width:8%;background:var(--nb-teal)"></div></div> <span style="font-size:10px;color:var(--text3)">4,8%</span></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
+
+  <!-- ══════════════ SINIESTROS ══════════════ -->
+  <div class="section" id="sec-siniestros">
+    <div class="kpi-grid">
+      <div class="kpi r">
+        <div class="kpi-label">Total abiertos</div>
+        <div class="kpi-val danger">1.086</div>
+        <div class="kpi-delta dn">9 tramitadores activos</div>
+      </div>
+      <div class="kpi r">
+        <div class="kpi-label">Fuera de plazo</div>
+        <div class="kpi-val danger">623</div>
+        <div class="kpi-delta dn">Rev. anterior a 01-abr-2026</div>
+      </div>
+      <div class="kpi a">
+        <div class="kpi-label">Mayor carga</div>
+        <div class="kpi-val warn">RAQUEL00</div>
+        <div class="kpi-delta dn">589 abiertos · 403 fuera plazo</div>
+      </div>
+      <div class="kpi g">
+        <div class="kpi-label">Sin vencidos</div>
+        <div class="kpi-val ok">3</div>
+        <div class="kpi-delta up">GABINETE · TITA · ESTEFANIA</div>
+      </div>
+    </div>
+    <div class="card full">
+      <div class="ch"><span class="ct">Carga por tramitador</span><span class="cm">Naranja = fuera de plazo · Verde = sin vencidos</span></div>
+      <div class="tram-grid" id="tram-grid"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════ AGENDA ══════════════ -->
+  <div class="section" id="sec-agenda">
+    <div class="kpi-grid">
+      <div class="kpi b">
+        <div class="kpi-label">Próximos eventos</div>
+        <div class="kpi-val">6</div>
+        <div class="kpi-delta">Abril 2026</div>
+      </div>
+      <div class="kpi o">
+        <div class="kpi-label">Reuniones compañías</div>
+        <div class="kpi-val">3</div>
+        <div class="kpi-delta">Zurich · AXA · Allianz</div>
+      </div>
+      <div class="kpi b">
+        <div class="kpi-label">Reuniones internas</div>
+        <div class="kpi-val">1</div>
+        <div class="kpi-delta">Seguimiento eBroker</div>
+      </div>
+      <div class="kpi g">
+        <div class="kpi-label">Otros</div>
+        <div class="kpi-val">2</div>
+        <div class="kpi-delta">Personal · Trámites</div>
+      </div>
+    </div>
+
+    <div class="card full">
+      <div class="ch"><span class="ct">Agenda abril 2026</span><span class="cm">Calendario Outlook · jc.iglesias@nb21.es</span></div>
+      <div class="agenda-grid">
+
+        <div class="agenda-item">
+          <div class="agenda-date"><div class="agenda-day">8</div><div class="agenda-month">ABR</div></div>
+          <div class="agenda-body">
+            <div class="agenda-title">NB21 · Seguimiento eBroker</div>
+            <div class="agenda-meta">
+              <span>9:00 – 9:30h</span>
+              <span>Teams</span>
+              <span>con Aaron Bouso + Alejandro Gayo</span>
+              <span class="agenda-badge ab-teams">Teams</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="agenda-item">
+          <div class="agenda-date"><div class="agenda-day">13</div><div class="agenda-month">ABR</div></div>
+          <div class="agenda-body">
+            <div class="agenda-title">Reunión NB21 con Zurich — M. Iniesta & L. Varela</div>
+            <div class="agenda-meta">
+              <span>13:30 – 15:00h</span>
+              <span>Oficina + Comida Comarea (con Raúl)</span>
+              <span class="agenda-badge ab-cia">Zurich</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="agenda-item">
+          <div class="agenda-date"><div class="agenda-day">15</div><div class="agenda-month">ABR</div></div>
+          <div class="agenda-body">
+            <div class="agenda-title">Cumple Rosa Casas (Juan César)</div>
+            <div class="agenda-meta">
+              <span>12:00 – 13:00h</span>
+              <span class="agenda-badge ab-per">Personal</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="agenda-item">
+          <div class="agenda-date"><div class="agenda-day">16</div><div class="agenda-month">ABR</div></div>
+          <div class="agenda-body">
+            <div class="agenda-title">Visita AXA — José Enrique Miranda + Emiliano López</div>
+            <div class="agenda-meta">
+              <span>9:00 – 10:00h</span>
+              <span>García Sabell, 1 — 4ª planta</span>
+              <span>con Tita Varela + Raúl Sangiao</span>
+              <span class="agenda-badge ab-cia">AXA</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="agenda-item">
+          <div class="agenda-date"><div class="agenda-day">16</div><div class="agenda-month">ABR</div></div>
+          <div class="agenda-body">
+            <div class="agenda-title">Comida con Allianz (pdte. restaurante — Mario)</div>
+            <div class="agenda-meta">
+              <span>14:30 – 16:00h</span>
+              <span>con Raúl Sangiao</span>
+              <span class="agenda-badge ab-cia">Allianz</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="agenda-item">
+          <div class="agenda-date"><div class="agenda-day">24</div><div class="agenda-month">ABR</div></div>
+          <div class="agenda-body">
+            <div class="agenda-title">Renovación DNI — cita previa</div>
+            <div class="agenda-meta">
+              <span>9:24 – 10:24h</span>
+              <span class="agenda-badge ab-per">Personal</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script>
-var tasks = [
-  {id:1, text:'Revisar DPA Enterprise con DPO', owner:'JC', status:'en-curso', priority:'warn'},
-  {id:2, text:'Migración Teams → Enterprise (Art. 28 RGPD)', owner:'JC', status:'pendiente', priority:'info'},
-  {id:3, text:'Protocolo de Uso de IA — revisión final', owner:'MA', status:'en-curso', priority:'warn'},
-  {id:4, text:'Analizar tasa anulación Q1 por oficinas', owner:'PL', status:'pendiente', priority:'danger'},
-  {id:5, text:'Configurar conector Microsoft 365 / OneDrive', owner:'LG', status:'pendiente', priority:'neu'}
+var tramitadores=[
+  {n:'RAQUEL00',    total:589, fp:403, c:'#D03C3C'},
+  {n:'LOLY00',      total:118, fp:66,  c:'#B97215'},
+  {n:'PAULA',       total:113, fp:79,  c:'#185FA5'},
+  {n:'GABINETE',    total:81,  fp:0,   c:'#244B5A'},
+  {n:'GUILLERMO00', total:78,  fp:36,  c:'#1A9B6C'},
+  {n:'EVA00',       total:50,  fp:28,  c:'#7F77DD'},
+  {n:'TITA',        total:31,  fp:0,   c:'#D85A30'},
+  {n:'MARTA00',     total:22,  fp:11,  c:'#639922'},
+  {n:'ESTEFANIA',   total:4,   fp:0,   c:'#888780'}
 ];
-
-var oficinas = [
-  {nombre:'A Coruña Centro', primas:'1.842.300', hsp:6.2, anulacion:18.1, pref:71, ok:false},
-  {nombre:'Vigo', primas:'1.634.200', hsp:5.8, anulacion:15.4, pref:68, ok:false},
-  {nombre:'Santiago', primas:'1.410.500', hsp:5.4, anulacion:12.8, pref:73, ok:true},
-  {nombre:'Pontevedra', primas:'1.188.000', hsp:5.1, anulacion:22.3, pref:59, ok:false},
-  {nombre:'Ferrol', primas:'980.400', hsp:6.8, anulacion:11.2, pref:78, ok:true},
-  {nombre:'Ourense', primas:'876.300', hsp:4.9, anulacion:24.1, pref:55, ok:false},
-  {nombre:'Lugo', primas:'754.100', hsp:5.6, anulacion:13.5, pref:70, ok:true},
-  {nombre:'A Estrada', primas:'612.800', hsp:5.3, anulacion:19.8, pref:62, ok:false}
-];
-
-var avColors = {
-  JC: 'background:#DBEAFC;color:#185FA5',
-  MA: 'background:#E1F5EE;color:#0F6E56',
-  PL: 'background:#FFF3D6;color:#92600A',
-  LG: 'background:#F5C4B3;color:#712B13',
-  RV: 'background:#EEEDFE;color:#3C3489'
-};
-
-var currentFilter = 'todas';
-
-function renderTasks() {
-  var filtered = tasks.filter(function(t) {
-    if (currentFilter === 'todas') return true;
-    if (currentFilter === 'done') return t.status === 'done';
-    return t.status === currentFilter;
+function renderTrams(){
+  var max=589,html='';
+  tramitadores.forEach(function(t){
+    var pct=Math.round(t.total/max*100);
+    html+='<div class="tram-card">'
+      +'<div class="tram-head"><div class="tram-av" style="background:'+t.c+'22;color:'+t.c+'">'+t.n.substring(0,2)+'</div>'
+      +'<div class="tram-name">'+t.n+'</div></div>'
+      +'<div class="tram-count">'+t.total+'</div>'
+      +(t.fp>0?'<div class="tram-fp">'+t.fp+' fuera de plazo</div>':'<div class="tram-ok">Sin vencidos</div>')
+      +'<div class="tram-bar"><div class="tram-fill" style="width:'+pct+'%;background:'+t.c+'"></div></div>'
+      +'</div>';
   });
-  var html = '';
-  if (!filtered.length) {
-    html = '<div class="empty">Sin tareas en esta vista</div>';
-  } else {
-    filtered.forEach(function(t) {
-      var done = t.status === 'done';
-      var pillMap = {warn:'pill-warn', danger:'pill-danger', info:'pill-info', ok:'pill-ok', neu:'pill-neu'};
-      var labelMap = {warn:'En curso', danger:'Urgente', info:'Pendiente', ok:'Hecha', neu:'·'};
-      html += '<div class="task-item">'
-        + '<div class="chk' + (done?' done':'') + '" onclick="toggleTask(' + t.id + ')"></div>'
-        + '<div class="task-body">'
-        + '<div class="task-text' + (done?' done':'') + '">' + t.text + '</div>'
-        + '<div class="task-foot">'
-        + '<div class="av" style="' + (avColors[t.owner]||'background:#eee;color:#666') + '">' + t.owner + '</div>'
-        + (done ? '<span class="pill pill-ok">Hecha</span>' : '<span class="pill ' + pillMap[t.priority] + '">' + labelMap[t.priority] + '</span>')
-        + '</div>'
-        + '</div></div>';
-    });
-  }
-  document.getElementById('task-list').innerHTML = html;
-  document.getElementById('task-count').textContent = tasks.length + ' tareas';
+  document.getElementById('tram-grid').innerHTML=html;
 }
-
-function toggleTask(id) {
-  tasks = tasks.map(function(t) {
-    if (t.id === id) t.status = t.status === 'done' ? 'pendiente' : 'done';
-    return t;
-  });
-  renderTasks();
-}
-
-function filterTasks(f, btn) {
-  currentFilter = f;
-  document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+function showSec(id,btn){
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active')});
+  document.querySelectorAll('.navtab').forEach(function(t){t.classList.remove('active')});
+  document.getElementById('sec-'+id).classList.add('active');
   btn.classList.add('active');
-  renderTasks();
 }
-
-function addTask() {
-  var input = document.getElementById('new-input');
-  var owner = document.getElementById('new-owner').value;
-  var text = input.value.trim();
-  if (!text) return;
-  tasks.push({id: Date.now(), text: text, owner: owner, status: 'pendiente', priority: 'info'});
-  input.value = '';
-  renderTasks();
-}
-
-function renderOficinas() {
-  var html = '';
-  oficinas.forEach(function(o) {
-    var hspColor = o.hsp >= 5.4 ? 'var(--green)' : o.hsp >= 5.0 ? 'var(--amber)' : 'var(--red)';
-    var anulColor = o.anulacion <= 14 ? 'var(--green)' : o.anulacion <= 18 ? 'var(--amber)' : 'var(--red)';
-    var prefColor = o.pref >= 65 ? 'var(--green)' : 'var(--red)';
-    var barW = Math.min(100, Math.round(o.pref));
-    var barColor = o.pref >= 65 ? 'var(--green)' : 'var(--red)';
-    var estado = o.ok
-      ? '<span class="pill pill-ok">OK</span>'
-      : '<span class="pill pill-danger">Revisar</span>';
-    html += '<tr>'
-      + '<td style="font-weight:500">' + o.nombre + '</td>'
-      + '<td style="font-family:\'DM Mono\',monospace;font-size:11px">' + o.primas + ' €</td>'
-      + '<td style="color:' + hspColor + ';font-weight:500">' + o.hsp.toFixed(1) + '%</td>'
-      + '<td style="color:' + anulColor + ';font-weight:500">' + o.anulacion.toFixed(1) + '%</td>'
-      + '<td><span style="color:' + prefColor + ';font-weight:500">' + o.pref + '%</span> '
-      + '<div class="bar-wrap"><div class="bar-fill" style="width:' + barW + '%;background:' + barColor + '"></div></div></td>'
-      + '<td>' + estado + '</td>'
-      + '</tr>';
-  });
-  document.getElementById('oficina-tbody').innerHTML = html;
-}
-
-function handleSync() {
-  var dot = document.getElementById('sync-dot');
-  var label = document.getElementById('sync-label');
-  dot.style.background = '#F98E2B';
-  label.textContent = 'Actualizando...';
-  setTimeout(function() {
-    dot.style.background = '#4ade80';
-    label.textContent = 'Sincronizado';
-  }, 1500);
-}
-
-renderTasks();
-renderOficinas();
+renderTrams();
 </script>
 </body>
 </html>
